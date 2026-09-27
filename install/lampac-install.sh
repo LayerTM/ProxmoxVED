@@ -43,7 +43,7 @@ fetch_and_deploy_gh_release "lampac" "lampac-nextgen/lampac" "prebuild" "latest"
 msg_info "Configuring Lampac NextGen"
 if [[ ! -f /opt/lampac/init.conf ]]; then
   cp /opt/lampac/example.init.conf /opt/lampac/init.conf
-  jq '.chromium.Args = ["--no-sandbox"] | .BaseModule.SkipModules |= map(select(. != "TorrServer" and . != "TimeCode")) | .LampaWeb.initPlugins.torrserver = true | .LampaWeb.initPlugins.timecode = true' /opt/lampac/init.conf >/opt/lampac/init.conf.tmp
+  jq '.chromium.Args = ["--no-sandbox"] | .BaseModule.SkipModules |= map(select(. != "JacRed" and . != "Sync" and . != "TimeCode" and . != "TorrServer")) | .LampaWeb.initPlugins.torrserver = true | .LampaWeb.initPlugins.jacred = true | .LampaWeb.initPlugins.sync = true | .LampaWeb.initPlugins.bookmark = false | .LampaWeb.initPlugins.timecode = false' /opt/lampac/init.conf >/opt/lampac/init.conf.tmp
   mv /opt/lampac/init.conf.tmp /opt/lampac/init.conf
 fi
 if [[ ! -f /opt/lampac/passwd ]]; then
@@ -79,7 +79,7 @@ systemctl enable -q --now lampac
 msg_ok "Created Lampac NextGen Service"
 msg_info "Checking Lampac NextGen"
 for attempt in {1..30}; do
-  if systemctl is-active --quiet lampac && curl -fsS --max-time 3 'http://127.0.0.1:9118/version?type=hash' 2>/dev/null | grep -Eq '^[[:xdigit:]]{32}$' && curl -fsS --max-time 3 http://127.0.0.1:9118/ts.js >/dev/null && curl -fsS --max-time 3 http://127.0.0.1:9118/timecode.js >/dev/null; then
+  if systemctl is-active --quiet lampac && curl -fsS --max-time 3 'http://127.0.0.1:9118/version?type=hash' 2>/dev/null | grep -Eq '^[[:xdigit:]]{32}$' && curl -fsS --max-time 3 http://127.0.0.1:9118/ts.js >/dev/null && curl -fsS --max-time 3 http://127.0.0.1:9118/sync.js >/dev/null && curl -fsS --max-time 3 http://127.0.0.1:9118/api/v1.0/conf >/dev/null; then
     msg_ok "Lampac NextGen is responding"
     break
   fi

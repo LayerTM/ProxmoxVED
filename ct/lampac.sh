@@ -74,7 +74,7 @@ function update_script() {
 
     if [[ ! -f /opt/lampac/init.conf && ! -f /opt/lampac/init.yaml ]]; then
       cp /opt/lampac/example.init.conf /opt/lampac/init.conf
-      jq '.chromium.Args = ["--no-sandbox"] | .BaseModule.SkipModules |= map(select(. != "TorrServer" and . != "TimeCode")) | .LampaWeb.initPlugins.torrserver = true | .LampaWeb.initPlugins.timecode = true' /opt/lampac/init.conf >/opt/lampac/init.conf.tmp
+      jq '.chromium.Args = ["--no-sandbox"] | .BaseModule.SkipModules |= map(select(. != "JacRed" and . != "Sync" and . != "TimeCode" and . != "TorrServer")) | .LampaWeb.initPlugins.torrserver = true | .LampaWeb.initPlugins.jacred = true | .LampaWeb.initPlugins.sync = true | .LampaWeb.initPlugins.bookmark = false | .LampaWeb.initPlugins.timecode = false' /opt/lampac/init.conf >/opt/lampac/init.conf.tmp
       mv /opt/lampac/init.conf.tmp /opt/lampac/init.conf
     fi
     [[ -f /opt/lampac/passwd ]] && chmod 600 /opt/lampac/passwd
