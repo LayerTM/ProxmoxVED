@@ -59,7 +59,6 @@ function update_script() {
       /opt/lampac/passwd \
       /opt/lampac/current.conf \
       /opt/lampac/database \
-      /opt/lampac/wwwroot \
       /opt/lampac/plugins/override \
       /opt/lampac/module/NextHUB/override \
       /opt/lampac/module/Catalog/override \
