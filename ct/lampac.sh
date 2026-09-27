@@ -46,7 +46,6 @@ function update_script() {
       /opt/lampac/*.db-shm \
       /opt/lampac/*.db-wal \
       /opt/lampac/logs \
-      /opt/lampac/cache \
       /opt/lampac/TorrServer \
       /opt/lampac/torrserver \
       /opt/lampac/data/ts \
@@ -60,17 +59,20 @@ function update_script() {
       /opt/lampac/current.conf \
       /opt/lampac/database \
       /opt/lampac/plugins/override \
+      /opt/lampac/wwwroot/private \
       /opt/lampac/module/NextHUB/override \
       /opt/lampac/module/Catalog/override \
       /opt/lampac/module/AdminPanel/manifest.json \
       /opt/lampac/notifications_date.txt \
       /opt/lampac/excludes.conf \
       /opt/lampac/install.sh \
-      /opt/lampac/version.txt
+      /opt/lampac/version.txt \
+      /etc/systemd/system/lampac.service.d
 
     CLEAN_INSTALL=1 fetch_and_deploy_gh_release "lampac" "lampac-nextgen/lampac" "prebuild" "latest" "/opt/lampac" "lampac-nextgen.zip"
 
     restore_backup
+    systemctl daemon-reload
 
     if [[ ! -f /opt/lampac/init.conf && ! -f /opt/lampac/init.yaml ]]; then
       cp /opt/lampac/example.init.conf /opt/lampac/init.conf
