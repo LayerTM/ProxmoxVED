@@ -63,6 +63,7 @@ function update_script() {
       /opt/lampac/plugins/override \
       /opt/lampac/module/NextHUB/override \
       /opt/lampac/module/Catalog/override \
+      /opt/lampac/module/AdminPanel/manifest.json \
       /opt/lampac/notifications_date.txt \
       /opt/lampac/excludes.conf \
       /opt/lampac/install.sh \
