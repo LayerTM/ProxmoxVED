@@ -43,7 +43,7 @@ fetch_and_deploy_gh_release "lampac" "lampac-nextgen/lampac" "prebuild" "latest"
 msg_info "Configuring Lampac NextGen"
 if [[ ! -f /opt/lampac/init.conf ]]; then
   cp /opt/lampac/example.init.conf /opt/lampac/init.conf
-  jq '.chromium.Args = ["--no-sandbox"]' /opt/lampac/init.conf >/opt/lampac/init.conf.tmp
+  jq '.chromium.Args = ["--no-sandbox"] | .LampaWeb.initPlugins.torrserver = false | .LampaWeb.initPlugins.timecode = false' /opt/lampac/init.conf >/opt/lampac/init.conf.tmp
   mv /opt/lampac/init.conf.tmp /opt/lampac/init.conf
 fi
 if [[ ! -f /opt/lampac/passwd ]]; then
