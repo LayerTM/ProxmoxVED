@@ -31,7 +31,7 @@
   "notes": [
     {"text": "Lampac listens on port 9118. The Lampa online plugin is available at http://<IP>:9118/online.js.", "type": "info"},
     {"text": "A random root password for Lampac administrative endpoints is generated during installation and stored in /opt/lampac/passwd. Read it with 'cat /opt/lampac/passwd'.", "type": "info"},
-    {"text": "The starter configuration keeps resource-heavy optional modules such as TorrServer, Transcoding, Sync and DLNA disabled. Enable only the modules you need in /opt/lampac/init.conf.", "type": "info"},
+    {"text": "The starter configuration enables the Lampa online plugin, TorrServer and TimeCode. Resource-heavy optional modules such as Transcoding and DLNA remain disabled; configure additional modules in /opt/lampac/init.conf.", "type": "info"},
     {"text": "Both amd64 and arm64 are supported for the core service. The optional GStreamer HDR-to-SDR native tone-mapping plugin is currently provided only for Linux x64.", "type": "info"}
   ]
 }
