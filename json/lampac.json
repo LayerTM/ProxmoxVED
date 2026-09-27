@@ -1,0 +1,36 @@
+{
+  "name": "Lampac NextGen",
+  "slug": "lampac",
+  "categories": [13],
+  "date_created": "2026-09-26",
+  "type": "ct",
+  "updateable": true,
+  "privileged": false,
+  "architectures": ["amd64", "arm64"],
+  "interface_port": 9118,
+  "documentation": "https://docs.lampac.dev/",
+  "website": "https://github.com/lampac-nextgen/lampac",
+  "repository": "https://github.com/lampac-nextgen/lampac",
+  "logo": "https://raw.githubusercontent.com/lampac-nextgen/lampac/main/.github/social-preview.jpg",
+  "description": "Lampac NextGen is a self-hosted ASP.NET Core backend for Lampa. It aggregates media-provider links, exposes Lampa-compatible plugins and APIs, and optionally provides synchronization, DLNA, torrent, transcoding and related media services.",
+  "install_methods": [
+    {
+      "type": "default",
+      "script": "ct/lampac.sh",
+      "config_path": "/opt/lampac/init.conf",
+      "resources": {
+        "cpu": 2,
+        "ram": 2048,
+        "hdd": 8,
+        "os": "Debian",
+        "version": "13"
+      }
+    }
+  ],
+  "default_credentials": {"username": null, "password": null},
+  "notes": [
+    {"text": "Lampac listens on port 9118. The Lampa online plugin is available at http://<IP>:9118/online.js.", "type": "info"},
+    {"text": "A random root password for Lampac administrative endpoints is generated during installation and stored in /opt/lampac/passwd. Read it with 'cat /opt/lampac/passwd'.", "type": "info"},
+    {"text": "The starter configuration keeps resource-heavy optional modules such as TorrServer, Transcoding, Sync and DLNA disabled. Enable only the modules you need in /opt/lampac/init.conf.", "type": "info"}
+  ]
+}
