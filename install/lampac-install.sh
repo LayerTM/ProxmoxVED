@@ -26,11 +26,11 @@ $STD apt install -y \
   gstreamer1.0-tools \
   libgstreamer-plugins-base1.0-0 \
   libgstreamer1.0-0 \
-  libicu76 \
   libjpeg-dev \
   libnspr4 \
   libpng-dev \
   libwebp-dev \
+  ocl-icd-libopencl1 \
   xvfb
 msg_ok "Installed Lampac NextGen Dependencies"
 
@@ -42,7 +42,7 @@ fetch_and_deploy_gh_release "lampac" "lampac-nextgen/lampac" "prebuild" "latest"
 
 msg_info "Configuring Lampac NextGen"
 if [[ ! -f /opt/lampac/init.conf ]]; then
-  cp /opt/lampac/config/example.init.conf /opt/lampac/init.conf
+  cp /opt/lampac/example.init.conf /opt/lampac/init.conf
   jq '.chromium.Args = ["--no-sandbox"]' /opt/lampac/init.conf >/opt/lampac/init.conf.tmp
   mv /opt/lampac/init.conf.tmp /opt/lampac/init.conf
 fi
@@ -68,7 +68,7 @@ Environment=DOTNET_ROOT=/usr/share/dotnet
 Environment=DOTNET_RUNNING_IN_CONTAINER=false
 Environment=DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=false
 Environment=DOTNET_CLI_TELEMETRY_OPTOUT=1
-ExecStart=/usr/share/dotnet/dotnet /opt/lampac/Core.dll
+ExecStart=/usr/bin/dotnet /opt/lampac/Core.dll
 Restart=on-failure
 RestartSec=10
 
@@ -77,6 +77,18 @@ WantedBy=multi-user.target
 UNIT_EOF
 systemctl enable -q --now lampac
 msg_ok "Created Lampac NextGen Service"
+msg_info "Checking Lampac NextGen"
+for attempt in {1..30}; do
+  if systemctl is-active --quiet lampac && curl -fsS --max-time 3 'http://127.0.0.1:9118/version?type=hash' 2>/dev/null | grep -Eq '^[[:xdigit:]]{32}$'; then
+    msg_ok "Lampac NextGen is responding"
+    break
+  fi
+  if ((attempt == 30)); then
+    msg_error "Lampac NextGen did not respond at http://127.0.0.1:9118/version?type=hash"
+    exit 1
+  fi
+  sleep 2
+done
 
 motd_ssh
 customize

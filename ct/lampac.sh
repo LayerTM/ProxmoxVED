@@ -6,7 +6,7 @@ source "$_cs_boot" 2>/dev/null || source <(curl -fsSL "${COMMUNITY_SCRIPTS_CORE_
 # License: MIT | https://github.com/community-scripts/ProxmoxVED/raw/main/LICENSE
 # Source: https://github.com/lampac-nextgen/lampac
 
-APP="Lampac NextGen"
+APP="Lampac"
 var_tags="${var_tags:-media;streaming;lampa}"
 var_cpu="${var_cpu:-2}"
 var_ram="${var_ram:-2048}"
@@ -52,6 +52,7 @@ function update_script() {
       /opt/lampac/data/ts \
       /opt/lampac/.local \
       /opt/lampac/.aspnet \
+      /opt/lampac/.claude \
       /opt/lampac/.config \
       /opt/lampac/.playwright \
       /opt/lampac/users.json \
@@ -63,20 +64,36 @@ function update_script() {
       /opt/lampac/module/NextHUB/override \
       /opt/lampac/module/Catalog/override \
       /opt/lampac/notifications_date.txt \
-      /opt/lampac/excludes.conf
+      /opt/lampac/excludes.conf \
+      /opt/lampac/install.sh \
+      /opt/lampac/version.txt
 
     CLEAN_INSTALL=1 fetch_and_deploy_gh_release "lampac" "lampac-nextgen/lampac" "prebuild" "latest" "/opt/lampac" "lampac-nextgen.zip"
 
     restore_backup
 
-    if [[ ! -f /opt/lampac/init.conf && -f /opt/lampac/config/example.init.conf ]]; then
-      cp /opt/lampac/config/example.init.conf /opt/lampac/init.conf
+    if [[ ! -f /opt/lampac/init.conf && ! -f /opt/lampac/init.yaml ]]; then
+      cp /opt/lampac/example.init.conf /opt/lampac/init.conf
+      jq '.chromium.Args = ["--no-sandbox"]' /opt/lampac/init.conf >/opt/lampac/init.conf.tmp
+      mv /opt/lampac/init.conf.tmp /opt/lampac/init.conf
     fi
     [[ -f /opt/lampac/passwd ]] && chmod 600 /opt/lampac/passwd
 
     msg_info "Starting Lampac NextGen"
     systemctl start lampac
     msg_ok "Started Lampac NextGen"
+    msg_info "Checking Lampac NextGen"
+    for attempt in {1..30}; do
+      if systemctl is-active --quiet lampac && curl -fsS --max-time 3 'http://127.0.0.1:9118/version?type=hash' 2>/dev/null | grep -Eq '^[[:xdigit:]]{32}$'; then
+        msg_ok "Lampac NextGen is responding"
+        break
+      fi
+      if ((attempt == 30)); then
+        msg_error "Lampac NextGen did not respond at http://127.0.0.1:9118/version?type=hash"
+        exit 1
+      fi
+      sleep 2
+    done
     msg_ok "Updated successfully!"
   fi
   exit
